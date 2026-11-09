@@ -276,3 +276,25 @@ export function shareGrid(flips: number, par: number): string[] {
   for (let i = 0; i < squares.length; i += 10) lines.push(squares.slice(i, i + 10).join(""));
   return lines;
 }
+
+/** Whether `value` is a well-formed puzzle (as read back from storage). */
+export function isPuzzle(value: unknown): value is Puzzle {
+  const p = value as Partial<Puzzle> | null;
+  if (!p || typeof p !== "object" || p.w !== GRID) return false;
+  const { mask, start, plan, par } = p;
+  if (!Array.isArray(mask) || mask.length !== GRID * GRID) return false;
+  if (typeof start !== "string" || typeof plan !== "string" || start === plan) return false;
+  if (typeof par !== "number" || par < PAR_MIN || par > PAR_MAX) return false;
+  if (typeof p.regionName !== "string" || !p.greedy) return false;
+  return [start, plan].every((t) => {
+    if (t.length !== GRID * GRID) return false;
+    return [...t].every((c, i) => {
+      if (c === ".") return mask[i] === false;
+      if (mask[i] !== true) return false;
+      if (c === "L") return t[i + 1] === "R" && (i % GRID) + 1 < GRID;
+      if (c === "R") return t[i - 1] === "L";
+      if (c === "T") return t[i + GRID] === "B";
+      return c === "B" && t[i - GRID] === "T";
+    });
+  });
+}

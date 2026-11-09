@@ -1,12 +1,23 @@
-import { type Draggable, DraggableRenderer, rotateDeg, translate } from "dragology";
-import { useMemo, useState } from "react";
+import {
+  type DragFrame,
+  type Draggable,
+  DraggableRenderer,
+  type DragInitContext,
+  type DragSpecData,
+  Modifier,
+  modifier,
+  rotateDeg,
+  translate,
+  Vec2,
+} from "dragology";
+import { useEffect, useMemo, useState } from "react";
 
 import type { GameProps } from "../GameIsland";
 
 import { FitBoard } from "../../components/FitBoard";
 import { SharePanel } from "../../components/SharePanel";
 import { rngFor } from "../../lib/daily";
-import { useStoredState } from "../../lib/storage";
+import { readStored, useStoredState, writeStored } from "../../lib/storage";
 import "./game.css";
 import {
   type Block,
@@ -15,6 +26,7 @@ import {
   flippableBlocks,
   generate,
   GRID,
+  isPuzzle,
   matchCount,
   type Puzzle,
   shareGrid,
@@ -104,6 +116,38 @@ function floorPath(mask: boolean[], cell: number) {
     .join("");
 }
 
+/**
+ * Makes a flip follow how far the pointer has travelled from where it grabbed,
+ * in any direction, rather than only along the line the domino moves in. The
+ * pointer is remapped onto that line, and the gap reported to `d.closest` is
+ * the real distance to where the domino lands, so a drag toward one square
+ * beats a drag toward the other.
+ */
+class AnyDirection<T extends object> extends Modifier<T> {
+  readonly name = "anyDirection";
+  private origin: Vec2 | undefined;
+
+  constructor(
+    ctx: DragInitContext<T>,
+    inner: DragSpecData<T>,
+    readonly axis: Vec2,
+  ) {
+    super(ctx, inner);
+  }
+
+  frame(frame: DragFrame) {
+    const origin = (this.origin ??= frame.pointer);
+    const travelled = frame.pointer.dist(origin) * FOLLOW;
+    const along = origin.add(this.axis.withLen(travelled));
+    const result = this.inner.run({ pointer: along });
+    return { ...result, gap: frame.pointer.dist(result.grabPos ?? along) };
+  }
+}
+const anyDirection = modifier(AnyDirection);
+
+/** Pointer travel per unit of domino travel: a flip takes about a cell of drag. */
+const FOLLOW = 0.7;
+
 function makeDraggable(puzzle: Puzzle, peek: boolean, solved: boolean): Draggable<State> {
   const { mask, plan } = puzzle;
   const { top } = rowSpan(mask);
@@ -148,8 +192,13 @@ function makeDraggable(puzzle: Puzzle, peek: boolean, solved: boolean): Draggabl
                 solved || mine.length === 0
                   ? undefined
                   : () => {
-                      const specs = mine.map((b) => d.between([state, flip(state, tiling, b)]));
-                      return specs.length === 1 ? specs[0]! : d.closest(specs);
+                      const specs = mine.map((b) => {
+                        const next = flip(state, tiling, b);
+                        const to = centre(next.tiles.find((t) => t.id === tile.id)!);
+                        const axis = Vec2(to.x - c.x, to.y - c.y);
+                        return d.between([state, next]).with(anyDirection(axis));
+                      });
+                      return specs.length === 1 ? specs[0]! : d.closest(specs, { lockPast: 8 });
                     }
               }
             >
@@ -204,12 +253,45 @@ function message(flips: number, par: number): string {
   return `Solved in ${flips} flips. It can be done in ${par}.`;
 }
 
-export default function Game({ info, day }: GameProps) {
-  const puzzle = useMemo(() => generate(rngFor("tiling", day)), [day]);
+const CACHE_VERSION = 1;
+
+/** The day's puzzle, from the cache if it is there and valid, else generated. */
+function usePuzzle(day: number): Puzzle | null {
+  const key = `tiling-puzzle:${day}`;
+  const [puzzle, setPuzzle] = useState<Puzzle | null>(() => {
+    const cached = readStored<{ v: number; puzzle: unknown }>(key);
+    return cached?.v === CACHE_VERSION && isPuzzle(cached.puzzle) ? cached.puzzle : null;
+  });
+  useEffect(() => {
+    if (puzzle) return;
+    // let the page paint before the half-second of generation
+    const timer = setTimeout(() => {
+      const made = generate(rngFor("tiling", day));
+      writeStored(key, { v: CACHE_VERSION, puzzle: made });
+      setPuzzle(made);
+    }, 30);
+    return () => clearTimeout(timer);
+  }, [puzzle, day, key]);
+  return puzzle;
+}
+
+export default function Game(props: GameProps) {
+  const puzzle = usePuzzle(props.day);
+  if (!puzzle) return <p className="loading">Laying out the floor…</p>;
+  return <Play {...props} puzzle={puzzle} />;
+}
+
+function Play({ info, day, puzzle }: GameProps & { puzzle: Puzzle }) {
   const sig = `${puzzle.start}/${puzzle.plan}`;
   const fresh = (): Saved => ({ sig, tiles: tilesOf(puzzle.start), flips: 0 });
   const [saved, setSaved] = useStoredState<Saved>(`tiling:${day}`, fresh);
   const [peek, setPeek] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  useEffect(() => {
+    if (!confirming) return;
+    const timer = setTimeout(setConfirming, 4000, false);
+    return () => clearTimeout(timer);
+  }, [confirming]);
 
   const state = saved.sig === sig ? saved : fresh();
   const tiling = tilingOf(state.tiles, puzzle.mask);
@@ -224,8 +306,20 @@ export default function Game({ info, day }: GameProps) {
     ? `Solved in ${flips} ${flips === 1 ? "flip" : "flips"}, par ${puzzle.par}.`
     : `${flips} ${flips === 1 ? "flip" : "flips"} so far, par ${puzzle.par}. ${matching} of ${total} dominoes match the plan.`;
 
+  function reset() {
+    if (flips > 0 && !confirming) {
+      setConfirming(true);
+      return;
+    }
+    setConfirming(false);
+    setSaved(fresh());
+  }
+
   return (
     <div className="tiling">
+      <p className="tiling-help">
+        Two dominoes side by side in a 2×2 square can turn together. Drag one to turn the pair.
+      </p>
       <p className="tiling-region">{puzzle.regionName}</p>
       <FitBoard
         width={WIDTH}
@@ -248,7 +342,7 @@ export default function Game({ info, day }: GameProps) {
         </figure>
         <div className="tiling-side">
           <p className="tiling-count">
-            <strong>{flips}</strong> {flips === 1 ? "flip" : "flips"}
+            <strong>{flips}</strong> {flips === 1 ? "flip" : "flips"}{" "}
             <span className="tiling-par">Par {puzzle.par}</span>
           </p>
           <p className="tiling-match" aria-hidden="true">
@@ -257,20 +351,20 @@ export default function Game({ info, day }: GameProps) {
           <p className="visually-hidden" role="status" aria-live="polite">
             {summary}
           </p>
-          <div className="tiling-buttons">
-            <button
-              type="button"
-              className="button button-quiet"
-              aria-pressed={peek}
-              onClick={() => setPeek(!peek)}
-            >
-              {peek ? "Hide plan on floor" : "Show plan on floor"}
-            </button>
-            <button type="button" className="button" onClick={() => setSaved(fresh())}>
-              Reset
-            </button>
-          </div>
         </div>
+      </div>
+      <div className="tiling-buttons">
+        <button
+          type="button"
+          className="button button-quiet"
+          aria-pressed={peek}
+          onClick={() => setPeek(!peek)}
+        >
+          {peek ? "Hide plan" : "Show plan"}
+        </button>
+        <button type="button" className="button" onClick={reset}>
+          {confirming ? "Tap again to reset" : "Reset"}
+        </button>
       </div>
       <p className="tiling-key">
         Solid dominoes with a dot are in the right place. Pale ones still need to move.

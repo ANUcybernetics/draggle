@@ -9,6 +9,7 @@ import {
   flipDistance,
   flippableBlocks,
   generate,
+  isPuzzle,
   matchCount,
   neighbours,
   PAR_MAX,
@@ -117,5 +118,16 @@ describe("share grid", () => {
   it("marks flips within par yellow and the rest black", () => {
     expect(shareGrid(7, 5)).toEqual(["🟨🟨🟨🟨🟨⬛⬛"]);
     expect(shareGrid(12, 12)[1]).toBe("🟨🟨");
+  });
+});
+
+describe("stored puzzles", () => {
+  it("accept a generated puzzle through a JSON round trip and reject damage", () => {
+    const p = generate(rngFor("tiling", 3));
+    const back = JSON.parse(JSON.stringify(p)) as unknown;
+    expect(isPuzzle(back)).toBe(true);
+    expect(isPuzzle({ ...p, start: p.start.replace("L", "T") })).toBe(false);
+    expect(isPuzzle({ ...p, par: 40 })).toBe(false);
+    expect(isPuzzle(null)).toBe(false);
   });
 });
