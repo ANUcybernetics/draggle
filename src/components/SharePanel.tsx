@@ -14,11 +14,7 @@ export type Outcome = {
 };
 
 export function shareText(info: GameInfo, day: number, outcome: Outcome, url: string) {
-  return [
-    `Draggle ${info.title} #${day} ${outcome.solved ? outcome.score : "X"}`,
-    ...outcome.grid,
-    url,
-  ].join("\n");
+  return [`Draggle ${info.title} #${day} ${outcome.score}`, ...outcome.grid, url].join("\n");
 }
 
 /** Shown once a game ends: records the result and offers the share text. */
