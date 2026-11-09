@@ -163,6 +163,7 @@ a {
    it can't be relaxed for blank areas of the board. */
 .board svg {
   display: block;
+  -webkit-user-select: none;
   user-select: none;
   overflow: visible;
 }

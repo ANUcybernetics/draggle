@@ -9,5 +9,7 @@ export default {
     "value-keyword-case": null,
     "import-notation": null,
     "selector-class-pattern": null,
+    // Safari still needs -webkit-user-select on drag boards.
+    "property-no-vendor-prefix": null,
   },
 };
