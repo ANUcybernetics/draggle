@@ -14,7 +14,7 @@ export const GAMES: readonly GameInfo[] = [
   {
     id: "braid",
     title: "Braid",
-    blurb: "Swap neighbouring strands until the colours match the target.",
+    blurb: "Slide, flip and cancel crossings until the braid is as simple as it gets.",
   },
   {
     id: "algebra",

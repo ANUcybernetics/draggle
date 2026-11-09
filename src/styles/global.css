@@ -156,9 +156,13 @@ a {
   transform-origin: top left;
 }
 
+/* Dragology sets touch-action: none inline on the whole SVG, which blocks
+   scrolling past a tall board. Allow vertical panning on the board and turn it
+   off only on draggable elements, which Dragology marks with an inline
+   cursor: grab. Effective touch-action is the intersection with ancestors. */
 .board svg {
   display: block;
-  touch-action: none;
+  touch-action: pan-y !important;
   user-select: none;
   overflow: visible;
 }
@@ -212,9 +216,8 @@ a {
   fill: #20243a;
 }
 
-[draggable],
-[data-dragology-draggable] {
-  cursor: grab;
+.board [style*="cursor: grab"] {
+  touch-action: none;
 }
 
 /* Home */
