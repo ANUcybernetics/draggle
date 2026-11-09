@@ -4,6 +4,7 @@ import {
   combine,
   distribute,
   divide,
+  divisorOf,
   type Eq,
   eqKey,
   eqText,
@@ -20,6 +21,7 @@ import {
   rewrites,
   shortestPath,
   solve,
+  solvedLine,
   weekday,
 } from "./logic";
 
@@ -84,6 +86,14 @@ describe("rewrites", () => {
     expect(eqText(divide(eq([c(12)], [x(-1)]), "rhs")?.eq ?? start)).toBe("−12 = x");
     expect(divide(eq([x(1)], [c(4)]), "lhs")).toBeNull();
     expect(divide(start, "lhs")).toBeNull();
+  });
+
+  it("treats a lone −x as dividing by −1, in the chip and in par", () => {
+    const neg = eq([x(-1)], [c(5)]);
+    expect(divisorOf(neg.lhs)).toEqual(q(-1));
+    expect(divisorOf([x(1)])).toBeNull();
+    expect(eqText(divide(neg, "lhs")?.eq ?? neg)).toBe("x = −5");
+    expect(par(neg)).toBe(1);
   });
 
   it("divides a lone bracket by its factor, and multiplies brackets out", () => {
@@ -205,5 +215,6 @@ describe("result", () => {
     });
     expect(result(7, 5).grid).toEqual(["🟩🟩🟩🟩🟩🟧🟧"]);
     expect(result(6, 5).message).toBe("Solved in 6 moves. It can be done in 5.");
+    expect(solvedLine(eq([x(1)], [c(-4)]), 5, 4)).toBe("Solved: x = −4 in 5 moves, par 4.");
   });
 });

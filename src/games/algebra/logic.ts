@@ -190,13 +190,17 @@ export function combine(eq: Eq, side: Side, i: number, k: number): Rewrite | nul
   return { eq: withSide(eq, side, next), kind: "combine", text };
 }
 
-/** If `side` is one multiple of x, or one bracket, with coefficient not 1: that coefficient. */
-export function divisor(eq: Eq, side: Side): Q | null {
-  const items = eq[side];
+/**
+ * If `items` is one multiple of x, or one bracket, with coefficient not 1:
+ * that coefficient (−1 included). The board shows it as a pink chip.
+ */
+export function divisorOf(items: readonly Item[]): Q | null {
   const it = items[0];
   if (items.length !== 1 || !it || it.kind === "c" || isOne(it.coef)) return null;
   return it.coef;
 }
+
+export const divisor = (eq: Eq, side: Side) => divisorOf(eq[side]);
 
 /** Divide both sides by the coefficient of `side`'s lone term or bracket. */
 export function divide(eq: Eq, side: Side): Rewrite | null {
@@ -442,4 +446,9 @@ export function result(moves: number, parMoves: number): Result {
       ? `Solved in ${moves} moves, the fewest possible.`
       : `Solved in ${moves} moves. It can be done in ${parMoves}.`;
   return { score: `${moves} ${moves === 1 ? "move" : "moves"} (par ${parMoves})`, grid, message };
+}
+
+/** The live-region line once solved, e.g. "Solved: x = −4 in 5 moves, par 4." */
+export function solvedLine(eq: Eq, moves: number, parMoves: number): string {
+  return `Solved: ${eqText(eq)} in ${moves} ${moves === 1 ? "move" : "moves"}, par ${parMoves}.`;
 }

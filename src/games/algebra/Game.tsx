@@ -19,6 +19,7 @@ import {
   distribute,
   divide,
   divisor,
+  divisorOf,
   type Eq,
   eqKey,
   eqText,
@@ -37,6 +38,7 @@ import {
   type Side,
   SIDES,
   sideText,
+  solvedLine,
 } from "./logic";
 import "./game.css";
 
@@ -111,13 +113,14 @@ function faces(items: readonly Item[], i: number): { chip: Face | null; body: Fa
   if (it.kind === "c") return { chip: null, body: { ...none, lead, coef: k } };
   if (it.kind === "g") {
     return {
-      chip: { ...none, lead, coef },
+      chip: { ...none, lead, coef: k },
       body: { ...none, paren: `(${sideText(it.inner)})` },
     };
   }
-  // A lone x-term with a coefficient splits off its number, which divides.
-  if (items.length === 1 && coef) {
-    return { chip: { ...none, lead, coef }, body: { ...none, x: true } };
+  // A lone x-term with a coefficient splits off its number, which divides
+  // (−x shows −1, so the chip matches `divisorOf`).
+  if (divisorOf(items)) {
+    return { chip: { ...none, lead, coef: k }, body: { ...none, x: true } };
   }
   return { chip: null, body: { ...none, lead, coef, x: true } };
 }
@@ -434,9 +437,9 @@ export default function Game({ info, day }: GameProps) {
   return (
     <div className="algebra">
       <p className="alg-how">
-        Drag a term across the equals sign to move it, or onto a like term to combine them. Drag a
-        pink number onto its brackets to multiply out, or across the equals sign to divide by it.
-        Reordering terms is free.
+        Drag a term across = to move it or onto a like term to combine. A pink number, shown on
+        brackets and on a side’s only term, multiplies out or divides across. Par is the fewest
+        moves.
       </p>
       <div className="alg-bar-row">
         <p className="alg-count">
@@ -461,8 +464,12 @@ export default function Game({ info, day }: GameProps) {
         />
       </FitBoard>
       <p className="alg-last" aria-live="polite">
-        {saved.last || "Undo steps back, but the move still counts."}{" "}
-        <span className="visually-hidden">The equation is now {eqText(saved.eq)}.</span>
+        {solved
+          ? solvedLine(saved.eq, saved.moves, puzzle.par)
+          : saved.last || "Undo steps back, but the move still counts."}{" "}
+        {!solved && (
+          <span className="visually-hidden">The equation is now {eqText(saved.eq)}.</span>
+        )}
       </p>
       {solved && (
         <SharePanel
