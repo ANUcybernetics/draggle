@@ -267,13 +267,26 @@ function usePuzzle(day: number): Puzzle | null {
   });
   useEffect(() => {
     if (puzzle) return;
-    // let the page paint before the half-second of generation
-    const timer = setTimeout(() => {
-      const made = generate(rngFor("tiling", day));
+    const done = (made: Puzzle) => {
       writeStored(key, { v: CACHE_VERSION, puzzle: made });
       setPuzzle(made);
-    }, 30);
-    return () => clearTimeout(timer);
+    };
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const worker = new Worker(new URL("./generate.worker.ts", import.meta.url), {
+      type: "module",
+    });
+    worker.addEventListener("message", (event: MessageEvent<Puzzle>) => done(event.data));
+    // if the worker can't start, generate here after the page has painted
+    worker.addEventListener("error", () => {
+      timer = setTimeout(() => done(generate(rngFor("tiling", day))), 30);
+    });
+    // Worker.postMessage takes no targetOrigin (that's window.postMessage)
+    // oxlint-disable-next-line unicorn/require-post-message-target-origin
+    worker.postMessage(day);
+    return () => {
+      worker.terminate();
+      clearTimeout(timer);
+    };
   }, [puzzle, day, key]);
   return puzzle;
 }
