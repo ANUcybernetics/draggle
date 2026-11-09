@@ -1,0 +1,11 @@
+---
+import Base from "../layouts/Base.astro";
+import { sitePath } from "../lib/paths";
+---
+
+<Base title="Draggle: page not found" description="There's no page at this address.">
+  <h1>Not here</h1>
+  <p class="lede">
+    There's no page at this address. <a href={sitePath()}>Go to today's puzzles</a>.
+  </p>
+</Base>

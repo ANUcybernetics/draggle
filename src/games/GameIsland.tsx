@@ -17,8 +17,11 @@ export default function GameIsland({ id }: { id: GameInfo["id"] }) {
   const Game = GAMES[id];
   const day = currentDay();
   return (
-    <Suspense fallback={<p className="loading">Setting out the pieces…</p>}>
-      <Game info={gameInfo(id)} day={day} />
-    </Suspense>
+    <>
+      <p className="game-day">Puzzle #{day}</p>
+      <Suspense fallback={<p className="loading">Setting out the pieces…</p>}>
+        <Game info={gameInfo(id)} day={day} />
+      </Suspense>
+    </>
   );
 }
