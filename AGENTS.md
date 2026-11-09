@@ -33,6 +33,8 @@ interactive prompt.
   `FitBoard`; every drag target is at least 44px on a phone.
 - Dragology elements are matched by `id`, never React `key`: a `key` on an
   element inside a draggable throws. Position with `transform`, not `x`/`y`.
+- Dragology can't blend a `className` that differs between states (it throws).
+  Draw each look as its own child and switch with `opacity`.
 - Moves the rules forbid are never offered as drop states; don't validate after
   the drop.
 - Colours come from the tokens in `global.css` (classes, not hex in SVG), so
