@@ -1,6 +1,8 @@
 {
   "name": "draggle",
   "private": true,
+  "license": "MIT",
+  "author": "Ben Swift",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
