@@ -22,10 +22,22 @@ export function writeStored(key: string, value: unknown): void {
   }
 }
 
-/** useState that persists to localStorage under `key`. */
+/**
+ * useState that persists to localStorage under `key`, and follows writes made
+ * by the same page in other tabs.
+ */
 export function useStoredState<T>(key: string, initial: () => T) {
   const [value, setValue] = useState<T>(() => readStored<T>(key) ?? initial());
   useEffect(() => writeStored(key, value), [key, value]);
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== PREFIX + key) return;
+      const next = readStored<T>(key);
+      if (next !== undefined) setValue(next);
+    };
+    globalThis.addEventListener("storage", onStorage);
+    return () => globalThis.removeEventListener("storage", onStorage);
+  }, [key]);
   return [value, setValue] as const;
 }
 
