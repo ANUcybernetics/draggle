@@ -357,12 +357,7 @@ function Play({ info, day, puzzle }: GameProps & { puzzle: Puzzle }) {
         </div>
       </div>
       <div className="tiling-buttons">
-        <button
-          type="button"
-          className="button button-quiet"
-          aria-pressed={peek}
-          onClick={() => setPeek(!peek)}
-        >
+        <button type="button" className="button button-quiet" onClick={() => setPeek(!peek)}>
           {peek ? "Hide plan" : "Show plan"}
         </button>
         <button type="button" className="button" onClick={reset}>

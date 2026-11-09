@@ -10,10 +10,11 @@ export function getStaticPaths() {
 const { info } = Astro.props as { info: GameInfo };
 ---
 
-<Base title={`Draggle: ${info.title}`} description={info.blurb} game={info.id}>
+<Base title={`${info.title} | Draggle`} description={info.blurb} game={info.id}>
   <h1>{info.title}</h1>
   <p class="lede">{info.blurb}</p>
   <GameIsland id={info.id} client:only="react">
-    <p slot="fallback" class="loading">This puzzle needs JavaScript to run.</p>
+    <p slot="fallback" class="loading">Setting out the pieces…</p>
   </GameIsland>
+  <noscript><p class="loading">This puzzle needs JavaScript to run.</p></noscript>
 </Base>

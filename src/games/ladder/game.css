@@ -49,9 +49,9 @@
 }
 
 .piece-letter.ladder-on-teal {
-  fill: #fff;
+  fill: var(--on-ink);
 }
 
 .piece-letter.ladder-on-yellow {
-  fill: #20243a;
+  fill: var(--on-yellow);
 }

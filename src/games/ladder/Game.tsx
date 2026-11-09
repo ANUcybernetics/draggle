@@ -310,7 +310,7 @@ export default function Game({ info, day }: GameProps) {
           }}
         />
       </FitBoard>
-      <p className="ladder-status" role="status" aria-live="polite">
+      <p className="ladder-status" role="status">
         {summary(puzzle, moves)}
       </p>
       {status !== "playing" ? (
