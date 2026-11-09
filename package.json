@@ -28,6 +28,7 @@
     "@astrojs/check": "^0.9.12",
     "@e18e/eslint-plugin": "^0.8.1",
     "@types/lodash-es": "^4.17.12",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "eslint-plugin-no-only-tests": "^3.4.0",
