@@ -267,6 +267,10 @@ a {
   transition:
     transform 120ms ease-out,
     box-shadow 120ms ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 .slab h2 {
@@ -357,11 +361,9 @@ a {
   font-size: 0.9375rem;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0ms !important;
-    animation-duration: 0ms !important;
+/* Cross-fade between pages where supported; instant elsewhere. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
   }
 }

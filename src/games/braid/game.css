@@ -80,6 +80,10 @@
 /* The board shrinks as pairs cancel; ease it so the page doesn't jump. */
 .braid .board-sizer {
   transition: height 250ms ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 /* Shown (by its opacity attribute) while lifted, and faintly on hover. */
