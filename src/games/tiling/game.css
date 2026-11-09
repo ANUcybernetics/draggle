@@ -1,0 +1,107 @@
+.tiling-region {
+  margin: 0 0 0.5rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.tile-h {
+  fill: var(--blue);
+}
+
+.tile-v {
+  fill: var(--pink);
+}
+
+.tile-edge {
+  fill: none;
+  stroke: var(--ink);
+}
+
+.plan-tile {
+  stroke: var(--ink);
+}
+
+.tile-pip {
+  fill: var(--on-ink);
+  pointer-events: none;
+}
+
+.floor {
+  fill: var(--raised);
+}
+
+.ghost {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 5;
+}
+
+.tiling-panel {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-top: 1rem;
+}
+
+.tiling-plan {
+  flex: none;
+  margin: 0;
+}
+
+.plan {
+  display: block;
+  width: 144px;
+  border: 2.5px solid var(--ink);
+  border-radius: 6px;
+}
+
+.tiling-plan figcaption {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.tiling-side {
+  flex: 1;
+  min-width: 0;
+}
+
+.tiling-count {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.tiling-count strong {
+  font-size: 2rem;
+  font-variation-settings: var(--mono);
+}
+
+.tiling-par {
+  margin-left: 0.75rem;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.tiling-match {
+  margin: 0.25rem 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.tiling-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tiling-buttons .button {
+  min-height: 44px;
+}
+
+.tiling-key {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
