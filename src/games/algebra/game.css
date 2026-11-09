@@ -28,7 +28,7 @@
 
 .alg-par {
   color: var(--muted);
-  margin-left: 0.35rem;
+  margin-inline-start: 0.35rem;
 }
 
 .alg-last {
