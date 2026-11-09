@@ -45,11 +45,16 @@ type Board = {
 
 type Saved = { board: Board; moves: MoveKind[] };
 
-const WIDTH = 340;
-const PAD_X = 42;
-const ROW_H = 48;
+// Unscaled on a 360px phone (328px of content), so a 44px row is a 44px target.
+const WIDTH = 320;
+const PAD_X = 36;
+const ROW_H = 44;
 const TOP = 30;
 const TAIL = 14;
+const BOTTOM = 16;
+
+/** The board's height for a word: it shrinks as crossings cancel. */
+const boardHeight = (crossings: number) => TOP + crossings * ROW_H + TAIL + BOTTOM;
 
 const wordOf = (board: Board): Letter[] =>
   board.rows.filter((r) => r.gap === undefined).map(({ i, sign }) => ({ i, sign }));
@@ -67,11 +72,10 @@ function layoutCrossings(n: number, rows: Row[]) {
   });
 }
 
-function makeBraid(n: number, rowCount: number): Draggable<Board> {
+function makeBraid(n: number): Draggable<Board> {
   const gapX = (WIDTH - 2 * PAD_X) / (n - 1);
   const xAt = (pos: number) => PAD_X + pos * gapX;
   const yStart = TOP - 16;
-  const yEnd = TOP + rowCount * ROW_H + TAIL;
 
   return ({ state: raw, d, draggedId }) => {
     const { rows, twistAt } = raw;
@@ -79,6 +83,8 @@ function makeBraid(n: number, rowCount: number): Draggable<Board> {
     const state: Board = { rows: word };
     const heights: number[] = rows.map((r) => (r.gap === "closed" ? 0 : ROW_H));
     const tops = heights.map((_, j) => TOP + heights.slice(0, j).reduce((s, h) => s + h, 0));
+    // (closed rows have no height, so the strands' ends rise as a pair cancels)
+    const yEnd = TOP + heights.reduce((s, h) => s + h, 0) + TAIL;
     const xs = layoutCrossings(n, rows);
 
     // In a triangle move's three rows, its strands stack by how many of the
@@ -171,21 +177,23 @@ function makeBraid(n: number, rowCount: number): Draggable<Board> {
       const x = xs[j] as { a: number; b: number };
       const id = handleId(x.a, x.b);
       const cx = (xAt(r.i) + xAt(r.i + 1)) / 2;
-      if (r.gap === "blank") return [<g id={id} transform={translate(cx, blankY)} />];
-      const spec = raw.done ? null : specFor(k);
-      k++;
-      const lifted = draggedId === id;
+      const blank = r.gap === "blank";
+      const spec = blank || raw.done ? null : specFor(k);
+      if (!blank) k++;
+      // A ring marks a crossing that can move; the rect lights up while it's
+      // dragged. Both looks switch by opacity, so they blend between states.
       return [
         <g
           id={id}
-          transform={translate(cx, (tops[j] as number) + ROW_H / 2)}
+          transform={translate(cx, blank ? blankY : (tops[j] as number) + ROW_H / 2)}
           dragologyZIndex={10}
           dragologyOnDrag={spec ? () => spec : undefined}
           className="braid-handle"
         >
+          <circle className="braid-cue" r={17} opacity={spec ? 1 : 0} />
           <rect
             className="braid-hit"
-            opacity={lifted ? 1 : 0}
+            opacity={draggedId === id ? 1 : 0}
             transform={translate(-gapX / 2, -ROW_H / 2)}
             width={gapX}
             height={ROW_H}
@@ -259,16 +267,23 @@ function fits(saved: Saved | undefined, puzzle: Puzzle): saved is Saved {
 
 const plural = (k: number, one: string, many: string) => `${k} ${k === 1 ? one : many}`;
 
+/** What the last move did, for the live status. */
+const DID: Record<MoveKind, string> = {
+  slide: "Slid a crossing.",
+  twist: "Twisted three crossings.",
+  cancel: "Cancelled a pair.",
+};
+
 export default function Game({ info, day }: GameProps) {
   const puzzle = useMemo(() => puzzleFor(day), [day]);
-  const draggable = useMemo(() => makeBraid(puzzle.n, puzzle.word.length), [puzzle]);
+  const draggable = useMemo(() => makeBraid(puzzle.n), [puzzle]);
   const [stored, setSaved] = useStoredState<Saved>(`braid:${day}`, () => freshSave(puzzle));
   const saved = fits(stored, puzzle) ? stored : freshSave(puzzle);
 
   const word = wordOf(saved.board);
   const solved = word.length === puzzle.minLength;
   const start = puzzle.word.length;
-  const height = TOP + start * ROW_H + TAIL + 16;
+  const height = boardHeight(word.length);
 
   function drop(board: Board) {
     const { done: _, ...next } = board;
@@ -286,27 +301,24 @@ export default function Game({ info, day }: GameProps) {
     score: `${plural(moves, "move", "moves")} (par ${puzzle.par})`,
     grid: shareGrid(saved.moves, start, puzzle.minLength),
   };
-  const message =
-    over <= 0
-      ? `Down to ${plural(puzzle.minLength, "crossing", "crossings")} in ${plural(moves, "move", "moves")}, right on par.`
-      : `Down to ${plural(puzzle.minLength, "crossing", "crossings")} in ${plural(moves, "move", "moves")}, ${over} over par.`;
+  const result = `Down to ${plural(puzzle.minLength, "crossing", "crossings")} in ${plural(moves, "move", "moves")}`;
+  const message = over <= 0 ? `${result}, right on par.` : `${result}, ${over} over par.`;
+  const last = saved.moves.at(-1);
+  const status = solved
+    ? message
+    : `${last ? `${DID[last]} ` : ""}${plural(word.length, "crossing", "crossings")} left, ${plural(moves, "move", "moves")} so far.`;
 
   return (
     <div className="braid">
+      <p className="braid-goal">
+        Get the braid down to {plural(puzzle.minLength, "crossing", "crossings")}. Par is the fewest
+        moves that does it: {puzzle.par} today.
+      </p>
       <p className="braid-help">
-        Drag a crossing up or down to slide it past one on other strands. Drag the middle of three
-        crossings on three strands sideways to flip them. Drag two crossings with the same strand on
-        top into each other to cancel them.
+        Drag a ringed crossing up or down to slide it, or sideways to twist it. Drag two crossings
+        with the same strand on top into each other to cancel them.
       </p>
-      <p className="braid-status" aria-live="polite">
-        {plural(word.length, "crossing", "crossings")} (fewest {puzzle.minLength}),{" "}
-        {plural(moves, "move", "moves")} (par {puzzle.par})
-      </p>
-      <FitBoard
-        width={WIDTH}
-        height={height}
-        label={`Braid of ${puzzle.n} strands with ${plural(word.length, "crossing", "crossings")}`}
-      >
+      <FitBoard width={WIDTH} height={height} label={`Braid of ${puzzle.n} strands`}>
         <DraggableRenderer
           draggable={draggable}
           state={{ ...saved.board, done: solved }}
@@ -315,6 +327,9 @@ export default function Game({ info, day }: GameProps) {
           height={height}
         />
       </FitBoard>
+      <p className={solved ? "braid-status visually-hidden" : "braid-status"} aria-live="polite">
+        {status}
+      </p>
       {!solved && (
         <div className="braid-actions">
           <button

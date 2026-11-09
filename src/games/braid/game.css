@@ -1,13 +1,19 @@
 /* Braid: strands in the riso inks, each over-crossing cut out of the strand
    beneath by a halo in the paper colour. */
-.braid-help {
-  margin: 0 0 0.75rem;
-  color: var(--muted);
+.braid-goal {
+  margin: 0 0 0.25rem;
   font-size: 0.9375rem;
 }
 
-.braid-status {
+.braid-help {
   margin: 0 0 0.5rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.braid-status {
+  margin: 0.5rem 0 0;
   font-variation-settings: var(--mono);
   font-size: 0.9375rem;
 }
@@ -60,6 +66,20 @@
 
 .braid-end[class*="strand-"] {
   fill: var(--strand);
+}
+
+/* A movable crossing's ring, shown by its opacity attribute. */
+.braid-cue {
+  fill: none;
+  stroke: var(--ink);
+  stroke-opacity: 0.45;
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+/* The board shrinks as pairs cancel; ease it so the page doesn't jump. */
+.braid .board-sizer {
+  transition: height 250ms ease-out;
 }
 
 /* Shown (by its opacity attribute) while lifted, and faintly on hover. */
