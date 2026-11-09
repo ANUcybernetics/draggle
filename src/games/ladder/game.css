@@ -1,0 +1,53 @@
+.ladder-hint,
+.ladder-status {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  margin: 0 0 0.75rem;
+}
+
+.ladder-status {
+  margin: 0.75rem 0 0;
+  min-height: 3em;
+}
+
+.piece.ladder-miss {
+  fill: var(--line);
+}
+
+.ladder-ghost {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 5;
+}
+
+.ladder-ghost-letter {
+  fill: var(--muted);
+  opacity: 0.7;
+}
+
+.ladder-label {
+  fill: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ladder-veil {
+  fill: var(--paper);
+  pointer-events: none;
+}
+
+/* Letters on the keys, matching the fixed tiles' ink-* rules in global.css. The
+   key's face rects are drawn just before its letters, so the specificity here
+   keeps global.css's `.ink-teal + .piece-letter` off the plain letter. */
+.board .piece-letter.ladder-on-paper {
+  fill: var(--ink);
+}
+
+.piece-letter.ladder-on-teal {
+  fill: #fff;
+}
+
+.piece-letter.ladder-on-yellow {
+  fill: #20243a;
+}
