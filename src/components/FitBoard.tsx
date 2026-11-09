@@ -31,7 +31,7 @@ export function FitBoard({
 
   return (
     <div ref={ref} className="board" role="group" aria-label={label}>
-      <div className="board-sizer" style={{ height: height * scale }}>
+      <div className="board-sizer" style={{ width: width * scale, height: height * scale }}>
         <div className="board-inner" style={{ width, height, transform: `scale(${scale})` }}>
           {children}
         </div>

@@ -149,6 +149,7 @@ a {
 
 .board-sizer {
   position: relative;
+  margin-inline: auto;
 }
 
 .board-inner {
@@ -218,6 +219,10 @@ a {
 /* Home */
 .wordmark {
   margin-block: 0.5rem 0.25rem;
+}
+
+.wordmark .board-sizer {
+  margin-inline: 0;
 }
 
 .wordmark-fallback {
