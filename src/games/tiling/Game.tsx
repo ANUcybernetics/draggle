@@ -200,9 +200,8 @@ const body = {
 };
 
 function message(flips: number, par: number): string {
-  if (flips === par) return "Par exactly. No shorter way to get there.";
-  if (flips <= par + 2) return `Done in ${flips}, just ${flips - par} over par.`;
-  return `The floor matches the plan. There's a ${par}-flip route if you want another look.`;
+  if (flips === par) return `Solved in ${flips} flips, the fewest possible.`;
+  return `Solved in ${flips} flips. It can be done in ${par}.`;
 }
 
 export default function Game({ info, day }: GameProps) {

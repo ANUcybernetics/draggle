@@ -60,7 +60,7 @@ export function SharePanel({
         Copy result
       </button>
       <p className="share-status" role="status">
-        {copied === "copied" && "Copied. Paste it anywhere."}
+        {copied === "copied" && "Copied to the clipboard."}
         {copied === "failed" && "Couldn't reach the clipboard. Select the text above instead."}
       </p>
     </section>

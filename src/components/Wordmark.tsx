@@ -78,7 +78,7 @@ export default function Wordmark() {
         />
       </FitBoard>
       <p className="wordmark-note" role="status">
-        {word === "gargled" ? "Gargled. That's the only other word in there." : " "}
+        {word === "gargled" ? "That spells gargled." : " "}
       </p>
     </div>
   );

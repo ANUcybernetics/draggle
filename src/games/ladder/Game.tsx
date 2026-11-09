@@ -285,7 +285,7 @@ export default function Game({ info, day }: GameProps) {
     <div className="ladder">
       <p className="ladder-hint">
         {status === "playing"
-          ? "Drag a letter onto a tile in the dotted row. Only real words will take it."
+          ? "Drag a letter onto a tile in the dotted row. It only drops where it makes a real word."
           : "Game over."}
       </p>
       <FitBoard
