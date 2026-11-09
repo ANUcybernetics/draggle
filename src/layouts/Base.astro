@@ -1,5 +1,7 @@
 ---
 import { sitePath } from "../lib/paths";
+import "@fontsource-variable/recursive/full.css";
+import latinFont from "@fontsource-variable/recursive/files/recursive-latin-full-normal.woff2?url";
 import "../styles/global.css";
 
 interface Props {
@@ -20,12 +22,7 @@ const home = sitePath();
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" href={sitePath("favicon.svg")} type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Recursive:slnt,wght,CASL,MONO@-15..0,300..1000,0..1,0..1&display=swap"
-    />
+    <link rel="preload" href={latinFont} as="font" type="font/woff2" crossorigin />
   </head>
   <body data-game={game}>
     {game && <header class="site-header">

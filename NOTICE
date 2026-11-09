@@ -6,3 +6,5 @@ Draggle is MIT licensed (see LICENSE). It includes third-party material:
   data Benjamin Titze; permissive licence), with words selected by wordfreq
   frequency data (Robyn Speer et al., CC BY-SA 4.0). Both of its word lists are
   shared under CC BY-SA 4.0. The file's header gives full provenance.
+- The Recursive typeface (Arrow Type, via @fontsource-variable/recursive) is
+  bundled under the SIL Open Font License 1.1.

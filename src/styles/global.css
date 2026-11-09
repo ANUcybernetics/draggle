@@ -12,7 +12,7 @@
   --on-ink: #fff;
   --on-yellow: #20243a;
   --accent: var(--ink);
-  --font: "Recursive", system-ui, sans-serif;
+  --font: "Recursive Variable", system-ui, sans-serif;
   --casual: "CASL" 1, "MONO" 0;
   --linear: "CASL" 0, "MONO" 0;
   --mono: "CASL" 0.6, "MONO" 1;
