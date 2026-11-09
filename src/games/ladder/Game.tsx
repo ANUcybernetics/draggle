@@ -27,18 +27,18 @@ import {
 type State = { moves: string[]; placed?: { letter: string; slot: number } };
 type Saved = { moves: string[] };
 
-const TILE = 42;
-const GAP = 6;
+const TILE = 39;
+const GAP = 4;
 const ROW_PITCH = TILE + GAP;
 const WIDTH = 322;
 const WORD_W = WORD_LEN * TILE + (WORD_LEN - 1) * GAP;
 const X0 = (WIDTH - WORD_W) / 2 + 8;
 /** Start and the six moves, plus a row for the target once it's revealed. */
 const rowsFor = (status: Status) => (status === "lost" ? MAX_MOVES + 2 : MAX_MOVES + 1);
-const keysY = (status: Status) => rowsFor(status) * ROW_PITCH + 10;
-const KEY_PITCH = 45;
+const keysY = (status: Status) => rowsFor(status) * ROW_PITCH + 8;
+const KEY_PITCH = 44;
 const KEY_COLS = 7;
-const KEY_SIZE = 39;
+const KEY_SIZE = 38;
 const boardHeight = (status: Status) =>
   keysY(status) + Math.ceil(ALPHABET.length / KEY_COLS) * KEY_PITCH;
 
@@ -119,13 +119,7 @@ function ladder(puzzle: Puzzle): Draggable<State> {
         {Array.from({ length: rowsFor(status) }, (_, r) => (
           <g id={`label-${r}`} transform={translate(X0 - 10, rowY(r) + TILE / 2)}>
             <text className="ladder-label" textAnchor="end" dominantBaseline="central">
-              {r === 0
-                ? "start"
-                : r <= MAX_MOVES
-                  ? r
-                  : r === MAX_MOVES + 1 && status === "lost"
-                    ? "was"
-                    : ""}
+              {rowLabel(r, words.length, status)}
             </text>
           </g>
         ))}
@@ -234,11 +228,21 @@ function ladder(puzzle: Puzzle): Draggable<State> {
   };
 }
 
+/** Unused rows go unlabelled once the game ends. */
+function rowLabel(row: number, wordCount: number, status: Status): string | number {
+  if (row === 0) return "start";
+  if (status === "playing") return row;
+  if (row < wordCount) return row;
+  return row === wordCount && status === "lost" ? "was" : "";
+}
+
 function plural(n: number, one: string, many: string) {
   return n === 1 ? one : many;
 }
 
 function summary(puzzle: Puzzle, moves: string[]): string {
+  const result = statusOf(moves, puzzle.target);
+  if (result !== "playing") return endMessage(puzzle, moves, result);
   const words = [puzzle.start, ...moves];
   const current = words.at(-1) as string;
   const status = statusOf(moves, puzzle.target);
@@ -286,7 +290,7 @@ export default function Game({ info, day }: GameProps) {
       <p className="ladder-hint">
         {status === "playing"
           ? "Drag a letter onto a tile in the dotted row. It only drops where it makes a real word."
-          : "Game over."}
+          : ""}
       </p>
       <FitBoard
         width={WIDTH}
