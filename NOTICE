@@ -1,0 +1,8 @@
+Draggle is MIT licensed (see LICENSE). It includes third-party material:
+
+- src/games/braid/ adapts Dragology's braid demo, MIT licence, Copyright (c)
+  2025 Dragology contributors.
+- src/games/ladder/words.ts is derived from ENABLE (public domain), SCOWL
+  (Kevin Atkinson; Australian data Benjamin Titze; permissive licence) and
+  wordfreq data (Robyn Speer et al., CC BY-SA 4.0). Its COMMON list is shared
+  under CC BY-SA 4.0. The file's header gives full provenance.
