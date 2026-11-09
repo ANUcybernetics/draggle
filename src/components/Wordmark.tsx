@@ -1,6 +1,7 @@
 import { type Draggable, DraggableRenderer, translate } from "dragology";
 import { useState } from "react";
 
+import { respectMotion } from "../lib/motion";
 import { FitBoard } from "./FitBoard";
 
 type Tile = { id: string; ch: string; ink: string };
@@ -34,9 +35,11 @@ const wordmark: Draggable<State> = ({ state, d, draggedId }) => (
           transform={translate(i * (TILE + GAP), 0)}
           dragologyZIndex={lifted ? "/1" : false}
           dragologyOnDrag={() =>
-            d
-              .closest(state.tiles.map((_, j) => ({ tiles: moveTile(state.tiles, i, j) })))
-              .withFloating()
+            respectMotion(
+              d
+                .closest(state.tiles.map((_, j) => ({ tiles: moveTile(state.tiles, i, j) })))
+                .withFloating(),
+            )
           }
         >
           <rect

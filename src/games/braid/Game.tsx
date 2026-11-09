@@ -9,6 +9,7 @@ import { useMemo } from "react";
 import type { GameProps } from "../GameIsland";
 
 import { FitBoard } from "../../components/FitBoard";
+import { respectMotion } from "../../lib/motion";
 import { type Outcome, SharePanel } from "../../components/SharePanel";
 import { useStoredState } from "../../lib/storage";
 import "./game.css";
@@ -187,7 +188,7 @@ function makeBraid(n: number): Draggable<Board> {
           id={id}
           transform={translate(cx, blank ? blankY : (tops[j] as number) + ROW_H / 2)}
           dragologyZIndex={10}
-          dragologyOnDrag={spec ? () => spec : undefined}
+          dragologyOnDrag={spec ? () => respectMotion(spec) : undefined}
           className="braid-handle"
         >
           <circle className="braid-cue" r={17} opacity={spec ? 1 : 0} />

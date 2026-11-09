@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import type { GameProps } from "../GameIsland";
 
 import { FitBoard } from "../../components/FitBoard";
+import { respectMotion } from "../../lib/motion";
 import { SharePanel } from "../../components/SharePanel";
 import { useStoredState } from "../../lib/storage";
 import "./game.css";
@@ -170,10 +171,12 @@ function ladder(puzzle: Puzzle): Draggable<State> {
               dragologyOnDrag={
                 settled && status === "playing"
                   ? () =>
-                      d
-                        .closest(options.length > 0 ? options : [state])
-                        .whenFar(state)
-                        .withFloating()
+                      respectMotion(
+                        d
+                          .closest(options.length > 0 ? options : [state])
+                          .whenFar(state)
+                          .withFloating(),
+                      )
                   : undefined
               }
             >

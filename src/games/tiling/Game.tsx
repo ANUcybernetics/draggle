@@ -15,6 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { GameProps } from "../GameIsland";
 
 import { FitBoard } from "../../components/FitBoard";
+import { respectMotion } from "../../lib/motion";
 import { SharePanel } from "../../components/SharePanel";
 import { rngFor } from "../../lib/daily";
 import { readStored, useStoredState, writeStored } from "../../lib/storage";
@@ -198,7 +199,9 @@ function makeDraggable(puzzle: Puzzle, peek: boolean, solved: boolean): Draggabl
                         const axis = Vec2(to.x - c.x, to.y - c.y);
                         return d.between([state, next]).with(anyDirection(axis));
                       });
-                      return specs.length === 1 ? specs[0]! : d.closest(specs, { lockPast: 8 });
+                      return respectMotion(
+                        specs.length === 1 ? specs[0]! : d.closest(specs, { lockPast: 8 }),
+                      );
                     }
               }
             >

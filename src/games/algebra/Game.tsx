@@ -12,6 +12,7 @@ import { useMemo } from "react";
 import type { GameProps } from "../GameIsland";
 
 import { FitBoard } from "../../components/FitBoard";
+import { respectMotion } from "../../lib/motion";
 import { SharePanel } from "../../components/SharePanel";
 import { useStoredState } from "../../lib/storage";
 import {
@@ -350,14 +351,18 @@ const board: Draggable<Board> = ({ state, d, draggedId }) => {
             id={id}
             transform={translate(p.x, p.y)}
             dragologyZIndex={draggedId === id ? "/1" : false}
-            dragologyOnDrag={state.locked ? undefined : () => itemDrag(d, state, placed, p)}
+            dragologyOnDrag={
+              state.locked ? undefined : () => respectMotion(itemDrag(d, state, placed, p))
+            }
           >
             {piece(p.bodyW, s, bodyX, draggedId === id, fill, drawFace(p.body, p.bodyW, s, ink))}
             {p.chip && (
               <g
                 id={chipId}
                 dragologyZIndex={draggedId === chipId ? "/2" : 1}
-                dragologyOnDrag={state.locked ? undefined : () => chipDrag(d, state, p)}
+                dragologyOnDrag={
+                  state.locked ? undefined : () => respectMotion(chipDrag(d, state, p))
+                }
               >
                 {piece(
                   p.chipW,
