@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import type { GameInfo } from "../games/registry";
 
+import { sitePath } from "../lib/paths";
 import { recordResult } from "../lib/storage";
 
 export type Outcome = {
@@ -39,7 +40,7 @@ export function SharePanel({
     recordResult(info.id, day, { solved: outcome.solved, score: outcome.score });
   }, [info.id, day, outcome.solved, outcome.score]);
 
-  const url = new URL(info.id, globalThis.location.href.replace(/[^/]*$/, "")).href;
+  const url = new URL(sitePath(info.id), globalThis.location.origin).href;
   const text = shareText(info, day, outcome, url);
 
   async function copy() {

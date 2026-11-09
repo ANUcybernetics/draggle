@@ -3,8 +3,7 @@ import HomeStatus from "../components/HomeStatus";
 import Wordmark from "../components/Wordmark";
 import { GAMES } from "../games/registry";
 import Base from "../layouts/Base.astro";
-
-const base = import.meta.env.BASE_URL;
+import { sitePath } from "../lib/paths";
 ---
 
 <Base title="Draggle" description="Four small daily puzzles you solve by dragging.">
@@ -18,7 +17,7 @@ const base = import.meta.env.BASE_URL;
   </p>
   <ul class="games" role="list">
     {GAMES.map((g) => <li>
-      <a class="slab" href={`${base}${g.id}`} data-game={g.id}>
+      <a class="slab" href={sitePath(g.id)} data-game={g.id}>
         <h2>{g.title}</h2>
         <p>{g.blurb}</p>
         <HomeStatus id={g.id} client:only="react">
