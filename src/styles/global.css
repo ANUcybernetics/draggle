@@ -10,6 +10,7 @@
   --teal: #00a383;
   --yellow: #f5b700;
   --on-ink: #fff;
+  --on-yellow: #20243a;
   --accent: var(--ink);
   --font: "Recursive", system-ui, sans-serif;
   --casual: "CASL" 1, "MONO" 0;
@@ -156,13 +157,11 @@ a {
   transform-origin: top left;
 }
 
-/* Dragology sets touch-action: none inline on the whole SVG, which blocks
-   scrolling past a tall board. Allow vertical panning on the board and turn it
-   off only on draggable elements, which Dragology marks with an inline
-   cursor: grab. Effective touch-action is the intersection with ancestors. */
+/* Dragology sets touch-action: none on the SVG, so a touch on the board never
+   scrolls the page. Chrome ignores touch-action on elements inside an SVG, so
+   it can't be relaxed for blank areas of the board. */
 .board svg {
   display: block;
-  touch-action: pan-y !important;
   user-select: none;
   overflow: visible;
 }
@@ -209,15 +208,11 @@ a {
 .ink-blue + .piece-letter,
 .ink-pink + .piece-letter,
 .ink-teal + .piece-letter {
-  fill: #fff;
+  fill: var(--on-ink);
 }
 
 .ink-yellow + .piece-letter {
-  fill: #20243a;
-}
-
-.board [style*="cursor: grab"] {
-  touch-action: none;
+  fill: var(--on-yellow);
 }
 
 /* Home */
@@ -298,6 +293,13 @@ a {
 }
 
 /* Game pages */
+.game-day {
+  margin: -1rem 0 1rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-variation-settings: var(--mono);
+}
+
 .loading {
   color: var(--muted);
 }
@@ -339,6 +341,7 @@ a {
   font-size: 0.9375rem;
   line-height: 1.35;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
   margin: 0 0 1rem;
 }
 
