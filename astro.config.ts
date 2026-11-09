@@ -6,5 +6,14 @@ export default defineConfig({
   base: process.env.DRAGGLE_BASE || "/",
   compressHTML: true,
   integrations: [react()],
+  // no code blocks to highlight, and Shiki's inline styles would break the CSP
+  markdown: { syntaxHighlight: false },
   output: "static",
+  // GitHub Pages can't send headers, so Astro writes the CSP as a <meta> tag,
+  // hashing the inline scripts and styles it emits.
+  security: {
+    csp: {
+      directives: ["default-src 'self'", "object-src 'none'", "base-uri 'none'"],
+    },
+  },
 });
