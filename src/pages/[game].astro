@@ -1,0 +1,19 @@
+---
+import GameIsland from "../games/GameIsland";
+import { GAMES, type GameInfo } from "../games/registry";
+import Base from "../layouts/Base.astro";
+
+export function getStaticPaths() {
+  return GAMES.map((info) => ({ params: { game: info.id }, props: { info } }));
+}
+
+const { info } = Astro.props as { info: GameInfo };
+---
+
+<Base title={`Draggle: ${info.title}`} description={info.blurb} game={info.id}>
+  <h1>{info.title}</h1>
+  <p class="lede">{info.blurb}</p>
+  <GameIsland id={info.id} client:only="react">
+    <p slot="fallback" class="loading">This puzzle needs JavaScript to run.</p>
+  </GameIsland>
+</Base>

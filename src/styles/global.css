@@ -1,0 +1,356 @@
+/* Tokens. Every board, piece and page reads colour from here. */
+:root {
+  --paper: #e9ecf1;
+  --raised: #f8f9fb;
+  --ink: #20243a;
+  --muted: #59617b;
+  --line: #c3c8d4;
+  --blue: #2f5bea;
+  --pink: #f2468a;
+  --teal: #00a383;
+  --yellow: #f5b700;
+  --on-ink: #fff;
+  --accent: var(--ink);
+  --font: "Recursive", system-ui, sans-serif;
+  --casual: "CASL" 1, "MONO" 0;
+  --linear: "CASL" 0, "MONO" 0;
+  --mono: "CASL" 0.6, "MONO" 1;
+  --radius: 10px;
+  --lift: 4px;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #181b2a;
+    --raised: #252a43;
+    --ink: #e9ecf1;
+    --muted: #a5acc2;
+    --line: #3b4161;
+    --blue: #6f8fff;
+    --pink: #ff6aa2;
+    --teal: #2ccfa8;
+    --yellow: #ffc93d;
+    --on-ink: #181b2a;
+  }
+}
+
+[data-game="ladder"] {
+  --accent: var(--blue);
+}
+
+[data-game="braid"] {
+  --accent: var(--pink);
+}
+
+[data-game="algebra"] {
+  --accent: var(--teal);
+}
+
+[data-game="tiling"] {
+  --accent: var(--yellow);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 1.0625rem;
+  font-variation-settings: var(--linear);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+main,
+.site-header,
+.site-footer {
+  width: min(44rem, 100% - 32px);
+  margin-inline: auto;
+}
+
+main {
+  padding-block: 1.5rem 3rem;
+}
+
+h1,
+h2 {
+  font-variation-settings: var(--casual);
+  font-weight: 850;
+  line-height: 1.1;
+  margin: 0 0 0.5rem;
+}
+
+h1 {
+  font-size: clamp(2.25rem, 9vw, 3.5rem);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.15em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.lede {
+  max-width: 36rem;
+  color: var(--muted);
+  margin: 0 0 1.75rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.site-header {
+  padding-top: 1rem;
+}
+
+.site-home {
+  font-variation-settings: var(--casual);
+  font-weight: 850;
+  font-size: 1.25rem;
+  text-decoration: none;
+}
+
+.site-footer {
+  border-top: 2px solid var(--line);
+  padding-block: 1rem 2rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* Boards: a fixed-size SVG scaled down to fit (see FitBoard). */
+.board {
+  width: 100%;
+}
+
+.board-sizer {
+  position: relative;
+}
+
+.board-inner {
+  position: absolute;
+  inset: 0 auto auto 0;
+  transform-origin: top left;
+}
+
+.board svg {
+  display: block;
+  touch-action: none;
+  user-select: none;
+  overflow: visible;
+}
+
+.board text {
+  font-family: var(--font);
+}
+
+/* Pieces: flat ink on a hard offset shadow, so they read as liftable. */
+.piece {
+  fill: var(--raised);
+  stroke: var(--ink);
+  stroke-width: 2.5;
+}
+
+.piece-shadow {
+  fill: var(--ink);
+}
+
+.piece.ink-blue {
+  fill: var(--blue);
+}
+
+.piece.ink-pink {
+  fill: var(--pink);
+}
+
+.piece.ink-teal {
+  fill: var(--teal);
+}
+
+.piece.ink-yellow {
+  fill: var(--yellow);
+}
+
+.piece-letter {
+  fill: var(--ink);
+  font-size: 38px;
+  font-weight: 800;
+  font-variation-settings: var(--mono);
+  pointer-events: none;
+}
+
+.ink-blue + .piece-letter,
+.ink-pink + .piece-letter,
+.ink-teal + .piece-letter {
+  fill: #fff;
+}
+
+.ink-yellow + .piece-letter {
+  fill: #20243a;
+}
+
+[draggable],
+[data-dragology-draggable] {
+  cursor: grab;
+}
+
+/* Home */
+.wordmark {
+  margin-block: 0.5rem 0.25rem;
+}
+
+.wordmark-fallback {
+  font-size: 3.5rem;
+  font-weight: 850;
+  font-variation-settings: var(--mono);
+  margin: 0;
+}
+
+.wordmark-note {
+  min-height: 1.5em;
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.games {
+  display: grid;
+  gap: 1.25rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+@media (width >= 40rem) {
+  .games {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.slab {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  height: 100%;
+  padding: 1.1rem 1.2rem 1rem;
+  border: 2.5px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--raised);
+  box-shadow: var(--lift) var(--lift) 0 var(--accent);
+  text-decoration: none;
+  transition:
+    transform 120ms ease-out,
+    box-shadow 120ms ease-out;
+}
+
+.slab h2 {
+  margin: 0;
+}
+
+.slab p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.slab:hover,
+.slab:focus-visible {
+  transform: translate(-2px, -2px);
+  box-shadow: calc(var(--lift) + 3px) calc(var(--lift) + 3px) 0 var(--accent);
+}
+
+.status {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  font-size: 0.875rem;
+  font-variation-settings: var(--mono);
+  color: var(--muted);
+}
+
+.status-done {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* Game pages */
+.loading {
+  color: var(--muted);
+}
+
+.button {
+  font: inherit;
+  font-weight: 700;
+  font-variation-settings: var(--casual);
+  color: var(--on-ink);
+  background: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 0.55rem 1.1rem;
+  box-shadow: var(--lift) var(--lift) 0 var(--accent);
+  cursor: pointer;
+}
+
+.button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--accent);
+}
+
+.button-quiet {
+  color: var(--ink);
+  background: var(--raised);
+}
+
+.share {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  border: 2.5px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--raised);
+}
+
+.share-text {
+  font-family: var(--font);
+  font-variation-settings: var(--mono);
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  margin: 0 0 1rem;
+}
+
+.share-status {
+  min-height: 1.5em;
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}

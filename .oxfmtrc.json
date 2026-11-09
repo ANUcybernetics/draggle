@@ -1,0 +1,6 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "proseWrap": "always",
+  "astro": { "compressHTML": "html" },
+  "overrides": [{ "files": ["**/*.md"], "options": { "printWidth": 80 } }]
+}

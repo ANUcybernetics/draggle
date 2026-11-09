@@ -1,0 +1,44 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  game?: string;
+}
+
+const { title, description, game } = Astro.props;
+const home = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={`${home}favicon.svg`} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Recursive:slnt,wght,CASL,MONO@-15..0,300..1000,0..1,0..1&display=swap"
+    />
+  </head>
+  <body data-game={game}>
+    {game && <header class="site-header">
+      <a href={home} class="site-home"> draggle </a>
+    </header>}
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>
+        A new puzzle in each game every day. Built on
+        <a href="https://declarative-dragging.github.io/">Dragology</a>, where every drag lands on a
+        legal move.
+      </p>
+    </footer>
+  </body>
+</html>

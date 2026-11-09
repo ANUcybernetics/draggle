@@ -1,0 +1,10 @@
+allowBuilds:
+  esbuild: true
+  sharp: false
+minimumReleaseAgeExclude:
+  - astro
+  - "@astrojs/*"
+# @napi-rs/wasm-runtime@1.2.4 (via @astrojs/check) otherwise resolves its
+# @emnapi/runtime peer to a 2.0 beta that crashes on load.
+overrides:
+  "@emnapi/runtime": ^1.11.3

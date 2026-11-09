@@ -1,0 +1,30 @@
+---
+import HomeStatus from "../components/HomeStatus";
+import Wordmark from "../components/Wordmark";
+import { GAMES } from "../games/registry";
+import Base from "../layouts/Base.astro";
+
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="Draggle" description="Four small daily puzzles you solve by dragging.">
+  <h1 class="visually-hidden">Draggle</h1>
+  <Wordmark client:only="react">
+    <p slot="fallback" class="wordmark-fallback" aria-hidden="true">draggle</p>
+  </Wordmark>
+  <p class="lede">
+    Four small puzzles a day. You solve each one by picking pieces up and putting them down; the
+    board only lets you drop where a move is legal.
+  </p>
+  <ul class="games" role="list">
+    {GAMES.map((g) => <li>
+      <a class="slab" href={`${base}${g.id}`} data-game={g.id}>
+        <h2>{g.title}</h2>
+        <p>{g.blurb}</p>
+        <HomeStatus id={g.id} client:only="react">
+          <span slot="fallback" class="status"> Today's puzzle </span>
+        </HomeStatus>
+      </a>
+    </li>)}
+  </ul>
+</Base>
