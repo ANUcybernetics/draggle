@@ -1,0 +1,98 @@
+.algebra .alg-how {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.alg-bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.alg-bar-row .button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.alg-count {
+  margin: 0;
+  font-variation-settings: var(--mono);
+}
+
+.alg-count strong {
+  font-size: 1.375rem;
+}
+
+.alg-par {
+  color: var(--muted);
+  margin-left: 0.35rem;
+}
+
+.alg-last {
+  min-height: 3em;
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* Board */
+.alg-tray {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+
+.alg-equals {
+  fill: var(--ink);
+  font-size: 40px;
+  font-weight: 800;
+  font-variation-settings: var(--mono);
+}
+
+.alg-zero {
+  fill: var(--muted);
+  font-size: 30px;
+  font-weight: 700;
+  font-variation-settings: var(--mono);
+}
+
+.alg-face text {
+  font-weight: 750;
+  font-variation-settings: var(--mono);
+  pointer-events: none;
+}
+
+.alg-face text.alg-x {
+  font-variation-settings:
+    "CASL" 0.6,
+    "MONO" 1,
+    "slnt" -15;
+}
+
+.alg-ink text,
+.alg-ink .alg-bar {
+  fill: var(--ink);
+}
+
+.alg-on text,
+.alg-on .alg-bar {
+  fill: var(--on-ink);
+}
+
+.alg-zone {
+  fill: none;
+  stroke: var(--pink);
+  stroke-width: 2.5;
+  stroke-dasharray: 7 5;
+}
+
+.alg-zone-label {
+  fill: var(--pink);
+  font-size: 18px;
+  font-weight: 800;
+  font-variation-settings: var(--mono);
+}
