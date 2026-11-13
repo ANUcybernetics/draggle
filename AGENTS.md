@@ -9,23 +9,16 @@ site; each game is a React island.
 Prefix with `mise exec --`. Run with `CI=1`: `astro check` otherwise stops at an
 interactive prompt.
 
-- `pnpm dev` / `pnpm build` / `pnpm preview`
 - `pnpm check`: typecheck, oxlint, stylelint, oxfmt check, vitest, build. Must
   be green before committing.
 
 ## Layout
 
-- `src/games/registry.ts`: game ids, titles and one-line blurbs
-- `src/games/<id>/Game.tsx`: the game, default export taking `GameProps`
-  (`src/games/GameIsland.tsx`); `logic.ts` beside it holds the pure puzzle
-  logic, tested in `logic.test.ts`
-- `src/lib/daily.ts`: puzzle numbering and seeded RNG; `rngFor(id, day)` is the
-  only source of randomness a puzzle may use, so everyone gets the same one
-- `src/lib/storage.ts`: `useStoredState` for in-progress state (localStorage,
-  guarded)
-- `src/components/`: `FitBoard` (scales a fixed-size board to the screen),
-  `SharePanel` (records the result and offers the emoji share text)
-- `src/styles/global.css`: design tokens and shared piece styles
+- each game is `src/games/<id>/Game.tsx`, a default export taking `GameProps`
+  (`src/games/GameIsland.tsx`), registered in `src/games/registry.ts`; pure
+  puzzle logic goes in `logic.ts` beside it, tested in `logic.test.ts`
+- `rngFor(id, day)` in `src/lib/daily.ts` is the only source of randomness a
+  puzzle may use, so everyone gets the same one
 
 ## Rules
 
@@ -39,5 +32,4 @@ interactive prompt.
   the drop.
 - Colours come from the tokens in `global.css` (classes, not hex in SVG), so
   dark mode works.
-- Browser checks use the `agent-browser` CLI, with `--args "--no-sandbox"` on
-  Linux.
+- On Linux, pass `--args "--no-sandbox"` to `agent-browser`.
