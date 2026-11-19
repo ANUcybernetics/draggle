@@ -8,3 +8,6 @@ minimumReleaseAgeExclude:
 # @emnapi/runtime peer to a 2.0 beta that crashes on load.
 overrides:
   "@emnapi/runtime": ^1.11.3
+  # eslint (via eslint-plugin-unused-imports) caps minimatch below 11
+  # (GHSA-g3hv-75wg-m249, fixed in 11.0.1). Drop once it allows >=11.0.1.
+  minimatch: ^11.0.1
