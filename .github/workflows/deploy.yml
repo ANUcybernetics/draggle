@@ -20,23 +20,23 @@ jobs:
     env:
       CI: "1"
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
 
       # node + pnpm from mise.toml / mise.lock
-      - uses: jdx/mise-action@v5
+      - uses: jdx/mise-action@v5.3.0
 
       - name: Locate pnpm store
         shell: bash
         run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
 
-      - uses: actions/cache@v6
+      - uses: actions/cache@v6.1.0
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - uses: actions/cache@v6
+      - uses: actions/cache@v6.1.0
         with:
           path: node_modules/.astro
           key: ${{ runner.os }}-astro-${{ github.sha }}
@@ -44,7 +44,7 @@ jobs:
             ${{ runner.os }}-astro-
 
       - id: pages
-        uses: actions/configure-pages@v6
+        uses: actions/configure-pages@v6.0.0
 
       - run: pnpm install --frozen-lockfile
       - name: Typecheck
@@ -62,7 +62,7 @@ jobs:
         env:
           DRAGGLE_BASE: ${{ steps.pages.outputs.base_path }}
 
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: dist
 
@@ -74,4 +74,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v5.0.1
